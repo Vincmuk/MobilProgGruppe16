@@ -11,6 +11,38 @@
         android:layout_height="match_parent">
 
         <Button
+            android:id="@+id/btn_addtask2"
+            android:layout_width="115dp"
+            android:layout_height="41dp"
+            android:layout_marginBottom="32dp"
+            android:text="Home"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_addtask3"
+            android:layout_width="115dp"
+            android:layout_height="41dp"
+            android:layout_marginBottom="32dp"
+            android:text="Fav"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.888"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_addtask4"
+            android:layout_width="115dp"
+            android:layout_height="41dp"
+            android:layout_marginBottom="32dp"
+            android:text="Settins"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.111"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
             android:id="@+id/btn_start"
             android:layout_width="115dp"
             android:layout_height="50dp"
@@ -44,10 +76,11 @@
             android:id="@+id/btn_addtask"
             android:layout_width="115dp"
             android:layout_height="41dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="476dp"
             android:text="+"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.945"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

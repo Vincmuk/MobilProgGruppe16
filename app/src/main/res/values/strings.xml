@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PomodoroTimer</string>
+    <string name="home">home\n</string>
+    <string name="noe">noe\n</string>
+    <string name="histor">logg\n</string>
+    <string name="profil">Profil</string>
+    <string name="favourites">Fav</string>
 </resources>
