@@ -4,5 +4,10 @@
     <style name="Theme.PomodoroTimer" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize theme attributes as needed -->
     </style>
+    
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
 
 </resources>
