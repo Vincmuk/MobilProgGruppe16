@@ -10,8 +10,8 @@
 		android:id="@+id/fragment_container"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_above="@+id/bottom_navigation"
-		app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+		android:layout_above="@id/navigation_buttons"
+		app:layout_constraintBottom_toTopOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<androidx.compose.ui.platform.ComposeView

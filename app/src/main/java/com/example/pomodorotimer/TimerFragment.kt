@@ -1,4 +1,6 @@
 package com.example.pomodorotimer
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -16,8 +18,13 @@ class TimerFragment : Fragment() {
     private lateinit var text_time: TextView
     private lateinit var btn_start: TextView
     private lateinit var btn_stop: TextView
-    private lateinit var btn_pause: TextView
+    private lateinit var btn_addtask: TextView
+    private lateinit var test_text: TextView
+    private var state = false
 
+    private var pomsToAddValue: Int = 0
+
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,7 +34,8 @@ class TimerFragment : Fragment() {
         text_time = view.findViewById(R.id.text_time)
         btn_start = view.findViewById(R.id.btn_start)
         btn_stop = view.findViewById(R.id.btn_stop)
-        btn_pause = view.findViewById(R.id.btn_pause)
+        btn_addtask = view.findViewById(R.id.btn_addtask)
+        test_text = view.findViewById(R.id.testText)
 
         var cTimer: CountDownTimer? = null
         lateinit var timer: Timer
@@ -47,18 +55,42 @@ class TimerFragment : Fragment() {
 
         text_time.text = timer.formattedStartTime
 
-        btn_start.setOnClickListener { timer.start() }
+        btn_start.setOnClickListener {
+            if (!state) {
+                timer.start()
+                flip()
+                btn_start.text = "Pause"
+            } else {
+                btn_start.text = "Resume"
+                timer.stop()
+                flip()
+            }
+
+        }
         btn_stop.setOnClickListener {
             timer.stop()
             timer.setTime(15, TimeUnit.MINUTES)
             text_time.text = timer.remainingFormattedTime
+
+            test_text.text = pomsToAddValue.toString()
         }
-        btn_pause.setOnClickListener { timer.stop() }
+
+        btn_addtask.setOnClickListener {
+            val intent = Intent(context, ActivityWindow::class.java)
+            intent.putExtra("pomsToAddValue", pomsToAddValue)
+            startActivity(intent)
+
+        }
 
         return view
     }
 
     private fun showToast(text: String) {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun flip(): Boolean {
+        state = !state
+        return state
     }
 }

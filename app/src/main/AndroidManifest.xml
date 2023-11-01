@@ -23,6 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ActivityWindow"
+            android:theme="@style/CustomTheme">
+        </activity>
     </application>
 
 </manifest>

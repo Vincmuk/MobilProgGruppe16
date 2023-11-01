@@ -21,35 +21,23 @@
             app:layout_constraintTop_toBottomOf="@+id/text_time" />
 
 		<Button
-            android:id="@+id/btn_stop"
-            android:layout_width="115dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:text="Stop"
-            app:layout_constraintEnd_toStartOf="@+id/btn_pause"
-            app:layout_constraintStart_toEndOf="@+id/btn_start"
-            app:layout_constraintTop_toBottomOf="@+id/text_time" />
+			android:id="@+id/btn_stop"
+			android:layout_width="115dp"
+			android:layout_height="50dp"
+			android:layout_marginTop="25dp"
+			android:text="Stop"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/btn_start"
+			app:layout_constraintTop_toBottomOf="@+id/text_time" />
 
 		<Button
-            android:id="@+id/btn_pause"
-            android:layout_width="115dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:text="Pause"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_stop"
-            app:layout_constraintTop_toBottomOf="@+id/text_time" />
-
-		<Button
-            android:id="@+id/btn_addtask"
-            android:layout_width="115dp"
-            android:layout_height="41dp"
-            android:layout_marginBottom="476dp"
-            android:text="+"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.945"
-            app:layout_constraintStart_toStartOf="parent" />
+			android:id="@+id/btn_addtask"
+			android:layout_width="115dp"
+			android:layout_height="41dp"
+			android:text="+"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
 
 		<TextView
             android:id="@+id/text_time"
@@ -59,6 +47,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+		<TextView
+			android:id="@+id/testText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="TextView"
+			app:layout_constraintBottom_toTopOf="@+id/btn_addtask"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/btn_stop" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
