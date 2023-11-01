@@ -1,97 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+	<FrameLayout
+		android:id="@+id/fragment_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/bottom_navigation"
+		app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.compose.ui.platform.ComposeView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
-        <Button
-            android:id="@+id/btn_addtask2"
-            android:layout_width="115dp"
-            android:layout_height="41dp"
-            android:layout_marginBottom="32dp"
-            android:text="Home"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+	<LinearLayout
+        android:id="@+id/navigation_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_navigation"
+        android:orientation="horizontal"
+        android:gravity="center">
 
-        <Button
-            android:id="@+id/btn_addtask3"
-            android:layout_width="115dp"
-            android:layout_height="41dp"
-            android:layout_marginBottom="32dp"
-            android:text="Fav"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.888"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/btn_addtask4"
-            android:layout_width="115dp"
-            android:layout_height="41dp"
-            android:layout_marginBottom="32dp"
-            android:text="Settins"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.111"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/btn_start"
-            android:layout_width="115dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:text="Start"
-            app:layout_constraintEnd_toStartOf="@+id/btn_stop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_time" />
-
-        <Button
-            android:id="@+id/btn_stop"
-            android:layout_width="115dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:text="Stop"
-            app:layout_constraintEnd_toStartOf="@+id/btn_pause"
-            app:layout_constraintStart_toEndOf="@+id/btn_start"
-            app:layout_constraintTop_toBottomOf="@+id/text_time" />
-
-        <Button
-            android:id="@+id/btn_pause"
-            android:layout_width="115dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="25dp"
-            android:text="Pause"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_stop"
-            app:layout_constraintTop_toBottomOf="@+id/text_time" />
-
-        <Button
-            android:id="@+id/btn_addtask"
-            android:layout_width="115dp"
-            android:layout_height="41dp"
-            android:layout_marginBottom="476dp"
-            android:text="+"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.945"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/text_time"
-            android:layout_width="wrap_content"
+		<Button
+            android:id="@+id/button_profile"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="60sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_weight="1"
+            android:text="Profile" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+		<Button
+            android:id="@+id/button_home"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Home" />
 
-</LinearLayout>
+		<Button
+            android:id="@+id/button_settings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings" />
+
+	</LinearLayout>
+</RelativeLayout>
