@@ -1,6 +1,7 @@
 package com.example.pomodorotimer
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.widget.TextView
@@ -29,11 +30,20 @@ class ActivityWindow() : Activity() {
         window.setLayout((width*0.8).toInt(), (height*0.8).toInt())
 
         btn_addPoms.setOnClickListener {
-            val pomsToAdd = text_pomodoroNumber.text.toString()
-            pomsToAddValue = pomsToAdd.toInt()
-            println(pomsToAdd)
-            finish()
+            val pomsToAddText = text_pomodoroNumber.text.toString()
+            if (pomsToAddText.isNotEmpty()) {
+                val pomsToAdd = pomsToAddText.toInt()
+                val resultIntent = Intent()
+                resultIntent.putExtra("updatedPomsToAddValue", pomsToAdd)
+                setResult(RESULT_OK, resultIntent)
+                finish()
+            } else {
+                println("Invalid pomsToAdd value: $pomsToAddText")
+                setResult(RESULT_CANCELED)
+                finish()
+            }
         }
+
     }
 
 

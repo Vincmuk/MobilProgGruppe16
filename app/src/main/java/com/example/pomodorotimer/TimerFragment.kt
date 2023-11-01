@@ -1,5 +1,6 @@
 package com.example.pomodorotimer
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -41,8 +42,8 @@ class TimerFragment : Fragment() {
         lateinit var timer: Timer
 
         timer = buildTimer {
-            startFormat("MM:SS:L")
-            startTime(15, TimeUnit.MINUTES)
+            startFormat("MM:SS")
+            startTime(25, TimeUnit.MINUTES)
             useExactDelay(true)
             onTick { millis, formattedTime ->
                 text_time.text = formattedTime
@@ -69,16 +70,14 @@ class TimerFragment : Fragment() {
         }
         btn_stop.setOnClickListener {
             timer.stop()
-            timer.setTime(15, TimeUnit.MINUTES)
+            timer.setTime(25, TimeUnit.MINUTES)
             text_time.text = timer.remainingFormattedTime
-
-            test_text.text = pomsToAddValue.toString()
         }
 
         btn_addtask.setOnClickListener {
             val intent = Intent(context, ActivityWindow::class.java)
             intent.putExtra("pomsToAddValue", pomsToAddValue)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
 
         }
 
@@ -93,4 +92,16 @@ class TimerFragment : Fragment() {
         state = !state
         return state
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            val updatedPomsToAddValue = data?.getIntExtra("updatedPomsToAddValue", 0)
+            // Use the updatedPomsToAddValue as needed
+            test_text.text = updatedPomsToAddValue.toString()
+        }
+    }
+
 }
