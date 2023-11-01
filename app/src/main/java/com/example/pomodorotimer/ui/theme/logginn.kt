@@ -23,7 +23,7 @@ fun Logginn ( Logg_inn: () -> Unit) {
     var password by remember { mutableStateOf ("Password") }
     Column (horizontalAlignment = Alignment.CenterHorizontally){
 
-       // Image(painter = painterResource(id = R.drawable.konto), contentDescription = "konto")
+       // xImage(painter = painterResource(id = R.drawable.konto), contentDescription = "konto")
         OutlinedTextField(value = "E-mail", onValueChange = {})
         OutlinedTextField(value = password, onValueChange = { password = it},
             visualTransformation = PasswordVisualTransformation(),

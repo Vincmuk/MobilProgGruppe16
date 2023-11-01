@@ -3,6 +3,7 @@ package com.example.pomodorotimer
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : AppCompatActivity() {
     private val timerFragment = TimerFragment()
@@ -10,6 +11,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Thread.sleep(3000)
+        installSplashScreen()
         setContentView(R.layout.activity_main)
 
         // Set the initial fragment (com.example.pomodorotimer.TimerFragment)
