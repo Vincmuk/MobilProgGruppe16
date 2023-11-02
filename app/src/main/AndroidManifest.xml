@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ActivityWindow"
-            android:theme="@style/CustomTheme">
+            android:theme="@style/smallWindowTheme">
         </activity>
     </application>
 

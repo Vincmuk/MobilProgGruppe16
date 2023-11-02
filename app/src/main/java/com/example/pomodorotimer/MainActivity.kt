@@ -2,21 +2,18 @@
 
 
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class MainActivity : AppCompatActivity() {
+ class MainActivity : AppCompatActivity() {
     private val timerFragment = TimerFragment()
     private val settingsFragment = SettingsFragment()
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.sleep(1000)
+        Thread.sleep(500)
         installSplashScreen()
         setContentView(R.layout.activity_main)
 
@@ -25,30 +22,38 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, timerFragment)
             .commit()
 
-        // Find the navigation buttons
-        val homeButton = findViewById<Button>(R.id.button_home)
-        val settingsButton = findViewById<Button>(R.id.button_settings)
-        val profileButton = findViewById<Button>(R.id.button_profile)
+        // Find the BottomNavigationView
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // Set click listeners to navigate to the corresponding fragments
-        homeButton.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, timerFragment)
-                .commit()
+        // Default select the home page
+        bottomNavigationView.selectedItemId = R.id.page_home
+
+        // Set a listener to handle item selection
+        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.page_home -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, timerFragment)
+                        .commit()
+                    true
+                }
+                R.id.page_settings -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, settingsFragment)
+                        .commit()
+                    true
+                }
+                R.id.page_profile -> {
+                    /*
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, profileFragment)
+                        .commit()
+                     */
+                    true
+                }
+                else -> false
+            }
         }
 
-        settingsButton.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, settingsFragment)
-                .commit()
-        }
-
-        profileButton.setOnClickListener {
-            // Navigate to the ProfileFragment (replace with your actual ProfileFragment)
-            // For example:
-            // supportFragmentManager.beginTransaction()
-            //     .replace(R.id.fragment_container, profileFragment)
-            //     .commit()
-        }
     }
 }

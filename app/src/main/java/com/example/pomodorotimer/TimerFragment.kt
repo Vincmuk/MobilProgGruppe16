@@ -42,21 +42,15 @@ import java.util.concurrent.TimeUnit
        var cTimer: CountDownTimer? = null
         lateinit var timer: Timer
 
-
-         timer = buildTimer {
-            startFormat("MM:SS")
-            startTime(25, TimeUnit.MINUTES)
+        timer = buildTimer {
+            startFormat("SS:LL")
+            startTime(0, TimeUnit.SECONDS)
             useExactDelay(true)
             onTick { millis, formattedTime ->
                 text_time.text = formattedTime
                 Log.i("Timer", "Remainingtime = $millis")
             }
-            onFinish {
-                showToast("Finished!")
-            }
         }
-
-        text_time.text = timer.formattedStartTime
 
         btn_start.setOnClickListener {
             if (!state) {
@@ -94,6 +88,29 @@ import java.util.concurrent.TimeUnit
         state = !state
         return state
     }
+        private fun buildTimerObject(totalTimers: Int): List<Timer> {
+            var isPause : Boolean
+            val listOfTimers = mutableListOf<Timer>() // Create an empty list of timers
+
+            for (i in 1..totalTimers) {
+                val timer = buildTimer {
+                    startFormat("MM:SS")
+                    startTime(5, TimeUnit.SECONDS)
+                    useExactDelay(true)
+                    onTick { millis, formattedTime ->
+                        text_time.text = formattedTime
+                        Log.i("Timer", "Remainingtime = $millis")
+                    }
+                    onFinish {
+                        showToast("Finished!")
+                        //TODO: PLAY NEXT TIMER IN LIST
+                    }
+                }
+                listOfTimers.add(timer) // Add the timer to the list
+            }
+            return listOfTimers
+        }
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -101,8 +118,11 @@ import java.util.concurrent.TimeUnit
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             val updatedPomsToAddValue = data?.getIntExtra("updatedPomsToAddValue", 0)
-            // Use the updatedPomsToAddValue as needed
-            test_text.text = updatedPomsToAddValue.toString()
+
+            if (updatedPomsToAddValue != null) {
+                buildTimerObject(updatedPomsToAddValue)
+            }
+
         }
     }
 

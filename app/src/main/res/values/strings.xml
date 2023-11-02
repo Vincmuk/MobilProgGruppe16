@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name" translatable="false">PomodoroTimer</string>
-    <string name="home" translatable="false">home\n</string>
+    <string name="Home" translatable="false">Home</string>
+    <string name="Settings" translatable="false">Settings</string>
+    <string name="Profile" translatable="false">Profile</string>
     <string name="noe" translatable="false">noe\n</string>
     <string name="histor" translatable="false">logg\n</string>
-    <string name="profil" translatable="false">Profil</string>
     <string name="favourites" translatable="false">Fav</string>
     <string name="logg_inn" translatable="false">Logg inn</string>
     <!-- TODO: Remove or change this placeholder text -->

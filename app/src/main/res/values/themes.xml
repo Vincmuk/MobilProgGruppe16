@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.PomodoroTimer" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.PomodoroTimer" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize theme attributes as needed -->
     </style>
     
-    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="smallWindowTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
@@ -15,8 +15,8 @@
     </style>
 
     <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/lilla</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">#7D8887</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.PomodoroTimer</item>
 
     </style>
