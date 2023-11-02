@@ -48,16 +48,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-		<TextView
-			android:id="@+id/testText"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="TextView"
-			app:layout_constraintBottom_toTopOf="@+id/btn_addtask"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/btn_stop" />
-
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

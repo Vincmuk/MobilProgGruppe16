@@ -3,7 +3,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,8 +22,10 @@ import java.util.concurrent.TimeUnit
     private lateinit var btn_addtask: TextView
     private lateinit var test_text: TextView
     private var state = false
-
-    private var pomsToAddValue: Int = 0
+    private var timerList: MutableList<Timer> = mutableListOf()
+        private var currentTimerIndex = 0
+        private lateinit var currentTimer: Timer
+        private var pomsToAddValue: Int = 0
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -37,37 +38,52 @@ import java.util.concurrent.TimeUnit
         btn_start = view.findViewById(R.id.btn_start)
         btn_stop = view.findViewById(R.id.btn_stop)
         btn_addtask = view.findViewById(R.id.btn_addtask)
-        test_text = view.findViewById(R.id.testText)
 
-       var cTimer: CountDownTimer? = null
-        lateinit var timer: Timer
-
-        timer = buildTimer {
-            startFormat("SS:LL")
-            startTime(0, TimeUnit.SECONDS)
+        timerList.add(buildTimer {
+            startFormat("MM:SS")
+            startTime(25, TimeUnit.SECONDS) // Initial Pomodoro duration
             useExactDelay(true)
             onTick { millis, formattedTime ->
                 text_time.text = formattedTime
                 Log.i("Timer", "Remainingtime = $millis")
+                println(timerList)
             }
+            onFinish {
+                showToast("Finished!")
+                startNextTimer()
+            }
+        })
+
+        if (currentTimerIndex == 0) {
+            currentTimer = timerList.first()
         }
 
+        text_time.text = currentTimer.remainingFormattedTime
+
+        println(timerList.toString())
+
         btn_start.setOnClickListener {
+            if (timerList.isNotEmpty()) {
+
+
             if (!state) {
-                timer.start()
+                currentTimer.start()
                 flip()
                 btn_start.text = "Pause"
             } else {
                 btn_start.text = "Resume"
-                timer.stop()
+                currentTimer.stop()
                 flip()
+            }
+            } else {
+                showToast("There are no timer to run!")
             }
 
         }
         btn_stop.setOnClickListener {
-            timer.stop()
-            timer.setTime(25, TimeUnit.MINUTES)
-            text_time.text = timer.remainingFormattedTime
+            currentTimer.stop()
+            currentTimer.setTime(25, TimeUnit.MINUTES)
+            text_time.text = currentTimer.remainingFormattedTime
         }
 
         btn_addtask.setOnClickListener {
@@ -88,42 +104,54 @@ import java.util.concurrent.TimeUnit
         state = !state
         return state
     }
-        private fun buildTimerObject(totalTimers: Int): List<Timer> {
-            var isPause : Boolean
-            val listOfTimers = mutableListOf<Timer>() // Create an empty list of timers
+        private fun startNextTimer() {
+            if (timerList.isNotEmpty()) {
+                timerList.removeAt(0)
+                if (timerList.isNotEmpty()) {
+                    currentTimer = timerList[0]
+                    text_time.text = currentTimer.remainingFormattedTime
+                } else {
+                    // All timers have finished
+                    showToast("All Pomodoros are done.")
+                }
+                btn_start.text = "Start"
+                state = false
+            }
+        }
 
-            for (i in 1..totalTimers) {
-                val timer = buildTimer {
-                    startFormat("MM:SS")
-                    startTime(5, TimeUnit.SECONDS)
-                    useExactDelay(true)
-                    onTick { millis, formattedTime ->
-                        text_time.text = formattedTime
-                        Log.i("Timer", "Remainingtime = $millis")
-                    }
-                    onFinish {
-                        showToast("Finished!")
-                        //TODO: PLAY NEXT TIMER IN LIST
+
+
+
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+            super.onActivityResult(requestCode, resultCode, data)
+
+            if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+                val updatedPomsToAddValue = data?.getIntExtra("updatedPomsToAddValue", 0)
+
+                if (updatedPomsToAddValue != null) {
+                    repeat(updatedPomsToAddValue) {
+                        timerList.add(buildTimer {
+                            startFormat("MM:SS")
+                            startTime(10, TimeUnit.SECONDS)
+                            useExactDelay(true)
+                            onTick { millis, formattedTime ->
+                                text_time.text = formattedTime
+                                Log.i("Timer", "Remainingtime = $millis")
+                                println(timerList)
+                            }
+                            onFinish {
+                                showToast("Finished!")
+                                startNextTimer()
+                            }
+                        })
                     }
                 }
-                listOfTimers.add(timer) // Add the timer to the list
+                if (timerList.isNotEmpty()) {
+                    currentTimer = timerList[0]
+                    text_time.text = currentTimer.remainingFormattedTime
+                }
             }
-            return listOfTimers
         }
 
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            val updatedPomsToAddValue = data?.getIntExtra("updatedPomsToAddValue", 0)
-
-            if (updatedPomsToAddValue != null) {
-                buildTimerObject(updatedPomsToAddValue)
-            }
-
-        }
-    }
 
 }
