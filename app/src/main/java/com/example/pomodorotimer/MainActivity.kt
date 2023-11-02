@@ -1,13 +1,18 @@
-package com.example.pomodorotimer
+ package com.example.pomodorotimer
+
 
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
+
 class MainActivity : AppCompatActivity() {
     private val timerFragment = TimerFragment()
     private val settingsFragment = SettingsFragment()
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

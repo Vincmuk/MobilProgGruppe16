@@ -14,8 +14,9 @@ import androidx.fragment.app.Fragment
 import timerx.Timer
 import timerx.buildTimer
 import java.util.concurrent.TimeUnit
+    class TimerFragment : Fragment() {
 
-class TimerFragment : Fragment() {
+
     private lateinit var text_time: TextView
     private lateinit var btn_start: TextView
     private lateinit var btn_stop: TextView
@@ -38,10 +39,11 @@ class TimerFragment : Fragment() {
         btn_addtask = view.findViewById(R.id.btn_addtask)
         test_text = view.findViewById(R.id.testText)
 
-        var cTimer: CountDownTimer? = null
+       var cTimer: CountDownTimer? = null
         lateinit var timer: Timer
 
-        timer = buildTimer {
+
+         timer = buildTimer {
             startFormat("MM:SS")
             startTime(25, TimeUnit.MINUTES)
             useExactDelay(true)
