@@ -1,4 +1,6 @@
 package com.example.pomodorotimer
+
+import Debug.Companion.printTimerList
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -13,21 +15,36 @@ import androidx.fragment.app.Fragment
 import timerx.Timer
 import timerx.buildTimer
 import java.util.concurrent.TimeUnit
-    class TimerFragment : Fragment() {
 
+enum class TimerType {
+    WORK, SHORT_BREAK, LONG_BREAK
+}
+
+class TimerFragment : Fragment() {
+    private val timerTypes = mutableListOf(
+        TimerType.WORK, TimerType.SHORT_BREAK, TimerType.WORK, TimerType.SHORT_BREAK,
+        TimerType.WORK, TimerType.SHORT_BREAK, TimerType.WORK, TimerType.LONG_BREAK
+    )
+
+    private val timerDurations = mapOf(
+        TimerType.WORK to 25L, // Work timer duration in minutes
+        TimerType.SHORT_BREAK to 5L, // Short break timer duration in minutes
+        TimerType.LONG_BREAK to 15L // Long break timer duration in minutes
+    )
 
     private lateinit var text_time: TextView
     private lateinit var btn_start: TextView
     private lateinit var btn_stop: TextView
     private lateinit var btn_addtask: TextView
-    private lateinit var test_text: TextView
     private var state = false
     private var timerList: MutableList<Timer> = mutableListOf()
-        private var currentTimerIndex = 0
-        private lateinit var currentTimer: Timer
-        private var pomsToAddValue: Int = 0
+    private var currentTimerIndex = 0
+    private lateinit var currentTimer: Timer
+    private var pomsToAddValue: Int = 0
 
-    @SuppressLint("SetTextI18n")
+    //CHANGE TO MINUTES BEFORE PRODUCTION
+    private val timeUnitToUse = TimeUnit.SECONDS
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,59 +56,9 @@ import java.util.concurrent.TimeUnit
         btn_stop = view.findViewById(R.id.btn_stop)
         btn_addtask = view.findViewById(R.id.btn_addtask)
 
-        timerList.add(buildTimer {
-            startFormat("MM:SS")
-            startTime(25, TimeUnit.SECONDS) // Initial Pomodoro duration
-            useExactDelay(true)
-            onTick { millis, formattedTime ->
-                text_time.text = formattedTime
-                Log.i("Timer", "Remainingtime = $millis")
-                println(timerList)
-            }
-            onFinish {
-                showToast("Finished!")
-                startNextTimer()
-            }
-        })
-
-        if (currentTimerIndex == 0) {
-            currentTimer = timerList.first()
-        }
-
-        text_time.text = currentTimer.remainingFormattedTime
-
-        println(timerList.toString())
-
-        btn_start.setOnClickListener {
-            if (timerList.isNotEmpty()) {
-
-
-            if (!state) {
-                currentTimer.start()
-                flip()
-                btn_start.text = "Pause"
-            } else {
-                btn_start.text = "Resume"
-                currentTimer.stop()
-                flip()
-            }
-            } else {
-                showToast("There are no timer to run!")
-            }
-
-        }
-        btn_stop.setOnClickListener {
-            currentTimer.stop()
-            currentTimer.setTime(25, TimeUnit.MINUTES)
-            text_time.text = currentTimer.remainingFormattedTime
-        }
-
-        btn_addtask.setOnClickListener {
-            val intent = Intent(context, ActivityWindow::class.java)
-            intent.putExtra("pomsToAddValue", pomsToAddValue)
-            startActivityForResult(intent, 1)
-
-        }
+        // Initialize buttons and timer
+        initButtons()
+        initializeTimer()
 
         return view
     }
@@ -104,54 +71,110 @@ import java.util.concurrent.TimeUnit
         state = !state
         return state
     }
-        private fun startNextTimer() {
+
+    @SuppressLint("SetTextI18n")
+    private fun startNextTimer() {
+        if (timerList.isNotEmpty()) {
+            timerList.removeAt(0)
             if (timerList.isNotEmpty()) {
-                timerList.removeAt(0)
+                currentTimer = timerList[0]
+                text_time.text = currentTimer.remainingFormattedTime
+            } else {
+                showToast("All Pomodoros are done.")
+            }
+            btn_start.text = "Start"
+            state = false
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            val updatedPomsToAddValue = data?.getIntExtra("updatedPomsToAddValue", 0)
+            if (updatedPomsToAddValue != null) {
+                repeat(updatedPomsToAddValue) {
+                    val timerType = timerTypes[(currentTimerIndex + timerList.size) % timerTypes.size]
+                    val timerDuration = timerDurations[timerType] ?: 25L
+                    val timer = createTimer(timerDuration)
+                    timerList.add(timer)
+                }
                 if (timerList.isNotEmpty()) {
-                    currentTimer = timerList[0]
+                    currentTimer = timerList[currentTimerIndex % timerList.size]
                     text_time.text = currentTimer.remainingFormattedTime
+                }
+            }
+        }
+        printTimerList(timerList)
+    }
+
+    private fun initializeTimer() {
+        if (currentTimerIndex == 0 && timerList.isNotEmpty()) {
+            currentTimer = timerList.first()
+            text_time.text = currentTimer.remainingFormattedTime
+        }
+    }
+
+    private fun createTimer(
+        duration: Long,
+        timeUnit: TimeUnit = timeUnitToUse,
+        format: String = "MM:SS"
+    ): Timer {
+        return buildTimer {
+            startFormat(format)
+            startTime(duration, timeUnit)
+            useExactDelay(true)
+            onTick { millis, formattedTime ->
+                text_time.text = formattedTime  // Update text_time for the current timer
+                Log.i("Timer", "Remaining time = $millis")
+            }
+            onFinish {
+                showToast("Finished!")
+                startNextTimer()
+            }
+        }
+    }
+
+
+
+
+
+    @SuppressLint("SetTextI18n")
+    private fun initButtons() {
+        btn_start.setOnClickListener {
+            if (timerList.isNotEmpty()) {
+                if (!state) {
+                    currentTimer.start()
+                    flip()
+                    btn_start.text = "Pause"
                 } else {
-                    // All timers have finished
-                    showToast("All Pomodoros are done.")
+                    btn_start.text = "Resume"
+                    currentTimer.stop()
+                    flip()
                 }
-                btn_start.text = "Start"
-                state = false
+            } else {
+                showToast("There are no timers to run!")
             }
         }
 
-
-
-
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
-
-            if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-                val updatedPomsToAddValue = data?.getIntExtra("updatedPomsToAddValue", 0)
-
-                if (updatedPomsToAddValue != null) {
-                    repeat(updatedPomsToAddValue) {
-                        timerList.add(buildTimer {
-                            startFormat("MM:SS")
-                            startTime(10, TimeUnit.SECONDS)
-                            useExactDelay(true)
-                            onTick { millis, formattedTime ->
-                                text_time.text = formattedTime
-                                Log.i("Timer", "Remainingtime = $millis")
-                                println(timerList)
-                            }
-                            onFinish {
-                                showToast("Finished!")
-                                startNextTimer()
-                            }
-                        })
-                    }
-                }
-                if (timerList.isNotEmpty()) {
-                    currentTimer = timerList[0]
-                    text_time.text = currentTimer.remainingFormattedTime
-                }
+        btn_stop.setOnClickListener {
+            if (timerList.isNotEmpty()) {
+                currentTimer.stop()
+                currentTimer.reset()
+                timerList.clear() // Clear the timer list
+                currentTimerIndex = 0 // Reset the currentTimerIndex
+                text_time.text = ""
+            } else {
+                showToast("There are no timers to stop!")
             }
         }
 
-
+        btn_addtask.setOnClickListener {
+            val intent = Intent(context, ActivityWindow::class.java)
+            intent.putExtra("pomsToAddValue", pomsToAddValue)
+            startActivityForResult(intent, 1)
+        }
+    }
 }
+
