@@ -10,12 +10,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+		<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/recyclerView"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			android:padding="14dp"
+			android:scrollbars="none"
+			app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+			app:layout_constraintBottom_toTopOf="@+id/btn_addtask"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHeight_percent="0.6"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/btn_stop"
+			app:layout_constraintWidth_percent="0.8" />
+
 		<Button
             android:id="@+id/btn_start"
             android:layout_width="115dp"
             android:layout_height="50dp"
             android:layout_marginTop="25dp"
-            android:text="Start"
+            android:text="@string/startButton"
             app:layout_constraintEnd_toStartOf="@+id/btn_stop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_time" />
@@ -25,7 +40,7 @@
 			android:layout_width="115dp"
 			android:layout_height="50dp"
 			android:layout_marginTop="25dp"
-			android:text="Stop"
+			android:text="@string/stopButton"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toEndOf="@+id/btn_start"
 			app:layout_constraintTop_toBottomOf="@+id/text_time" />
@@ -34,7 +49,7 @@
 			android:id="@+id/btn_addtask"
 			android:layout_width="115dp"
 			android:layout_height="41dp"
-			android:text="+"
+			android:text="@string/addButton"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />

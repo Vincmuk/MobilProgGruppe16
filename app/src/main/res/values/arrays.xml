@@ -1,12 +1,17 @@
 <resources>
-    <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <string-array name="theme_entries">
+        <item>Tomato</item>
+        <item>Kiwi</item>
+        <item>Strawberry</item>
+        <item>Watermelon</item>
+        <!-- Add other fruit themes as needed -->
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="theme_values">
+        <item>tomato</item>
+        <item>kiwi</item>
+        <item>strawberry</item>
+        <item>watermelon</item>
+        <!-- Add corresponding values for other fruit themes -->
     </string-array>
 </resources>

@@ -20,4 +20,12 @@
         <item name="postSplashScreenTheme">@style/Theme.PomodoroTimer</item>
 
     </style>
+
+    <style name="Theme.Kiwi" parent="Theme.MaterialComponents.Light">
+        <item name="color">@color/kiwiBackground</item>
+    </style>
+
+    <style name="Theme.Strawberry" parent="Theme.MaterialComponents.Light">
+        <item name="color">@color/strawberryBackground</item>
+    </style>
 </resources>
