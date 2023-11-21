@@ -1,21 +1,29 @@
- package com.example.pomodorotimer
-
+package com.example.pomodorotimer
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
- class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private val timerFragment = TimerFragment()
     private val settingsFragment = SettingsFragment()
+    private val profileFragment = ProfileFragment()
+
+    // Create an instance of the SessionViewModel
+    private val sessionViewModel by lazy {
+        ViewModelProvider(this)[SessionViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Thread.sleep(500)
         installSplashScreen()
         setContentView(R.layout.activity_main)
+
+        // Load existing sessions when the activity is created
+        sessionViewModel.loadExistingSessions(applicationContext)
 
         // Set the initial fragment (com.example.pomodorotimer.TimerFragment)
         supportFragmentManager.beginTransaction()
@@ -44,16 +52,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
                     true
                 }
                 R.id.page_profile -> {
-                    /*
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, profileFragment)
                         .commit()
-                     */
                     true
                 }
                 else -> false
             }
         }
-
     }
 }

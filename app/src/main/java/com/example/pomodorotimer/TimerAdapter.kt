@@ -34,11 +34,12 @@ class TimerAdapter(
         notifyDataSetChanged()
     }
 
-
-    fun updateTimer(position: Int, updatedTimer: Timer) {
-        timerList[position] = updatedTimer
-        notifyItemChanged(position)
+    fun setTimers(newTimers: List<Timer>) {
+        timerList.clear()
+        timerList.addAll(newTimers)
+        notifyDataSetChanged()
     }
+
 
     override fun onBindViewHolder(holder: TimerItemViewHolder, position: Int) {
         val timer = timerList[position]
@@ -52,9 +53,6 @@ class TimerAdapter(
             )
         }
     }
-
-
-
     override fun getItemCount(): Int {
         return timerList.size
     }

@@ -9,5 +9,5 @@
     android:layout_marginBottom="3dp"
     android:rotation="0"
     android:rotationX="0"
-    app:cardCornerRadius="40dp"
+    app:cardCornerRadius="24dp"
     app:contentPadding="35.75dp" />
