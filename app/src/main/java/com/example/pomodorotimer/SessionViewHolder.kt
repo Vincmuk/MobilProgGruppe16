@@ -5,6 +5,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val sessionNameTextView: TextView = itemView.findViewById(R.id.sessionNameTextView) // Replace with your TextView ID
-    // Add references to other views in your session item layout if needed
+    val sessionNameTextView: TextView = itemView.findViewById(R.id.sessionNameTextView)
+    val startTimeTextView: TextView = itemView.findViewById(R.id.startTimeTextView)
+    val endTimeTextView: TextView = itemView.findViewById(R.id.endTimeTextView)
+    val timersSizeTextView: TextView = itemView.findViewById(R.id.timersSizeTextView)
 }

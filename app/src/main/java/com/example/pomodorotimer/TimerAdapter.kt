@@ -3,14 +3,13 @@ package com.example.pomodorotimer
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.google.android.material.card.MaterialCardView
 import timerx.Timer
 
-class TimerAdapter(
-    private val timerList: MutableList<Timer>,
-    private val timerTypeMap: Map<Timer, TimerType> // Pass timerTypeMap as a parameter
-) : RecyclerView.Adapter<TimerItemViewHolder>() {
+class TimerAdapter(private val timerTypeMap: Map<Timer, TimerType>) :
+    ListAdapter<Timer, TimerItemViewHolder>(TimerDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerItemViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -19,30 +18,16 @@ class TimerAdapter(
         return TimerItemViewHolder(itemView)
     }
 
-    fun addTimer(timer: Timer) {
-        timerList.add(timer)
-        notifyItemInserted(timerList.size - 1)
+    fun removeFirstTimer(callback: () -> Unit) {
+        val updatedList = currentList.toMutableList()
+        updatedList.removeFirst()
+        submitList(updatedList) {
+            callback.invoke()
+        }
     }
-
-    fun removeTimer(position: Int) {
-        timerList.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
-    fun clearTimers() {
-        timerList.clear()
-        notifyDataSetChanged()
-    }
-
-    fun setTimers(newTimers: List<Timer>) {
-        timerList.clear()
-        timerList.addAll(newTimers)
-        notifyDataSetChanged()
-    }
-
 
     override fun onBindViewHolder(holder: TimerItemViewHolder, position: Int) {
-        val timer = timerList[position]
+        val timer = getItem(position)
         val timerType = timerTypeMap[timer]
 
         if (timerType != null) {
@@ -53,7 +38,15 @@ class TimerAdapter(
             )
         }
     }
-    override fun getItemCount(): Int {
-        return timerList.size
+
+    private class TimerDiffCallback : DiffUtil.ItemCallback<Timer>() {
+        override fun areItemsTheSame(oldItem: Timer, newItem: Timer): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: Timer, newItem: Timer): Boolean {
+            return oldItem == newItem
+        }
     }
+
 }

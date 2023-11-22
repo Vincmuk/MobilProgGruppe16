@@ -23,7 +23,8 @@
 			app:layout_constraintHeight_percent="0.6"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/btn_stop"
-			app:layout_constraintWidth_percent="0.8" />
+			app:layout_constraintWidth_percent="0.8"
+			tools:listitem="@layout/timer_item_layout"/>
 
 		<Button
             android:id="@+id/btn_start"

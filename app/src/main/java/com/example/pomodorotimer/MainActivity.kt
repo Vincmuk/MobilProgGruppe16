@@ -13,17 +13,14 @@ class MainActivity : AppCompatActivity() {
 
     // Create an instance of the SessionViewModel
     private val sessionViewModel by lazy {
-        ViewModelProvider(this)[SessionViewModel::class.java]
+        ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application))[SessionViewModel::class.java]
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.sleep(500)
         installSplashScreen()
         setContentView(R.layout.activity_main)
-
-        // Load existing sessions when the activity is created
-        sessionViewModel.loadExistingSessions(applicationContext)
 
         // Set the initial fragment (com.example.pomodorotimer.TimerFragment)
         supportFragmentManager.beginTransaction()
@@ -42,19 +39,19 @@ class MainActivity : AppCompatActivity() {
                 R.id.page_home -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, timerFragment)
-                        .commit()
+                        .commitNow()
                     true
                 }
                 R.id.page_settings -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, settingsFragment)
-                        .commit()
+                        .commitNow()
                     true
                 }
                 R.id.page_profile -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, profileFragment)
-                        .commit()
+                        .commitNow()
                     true
                 }
                 else -> false

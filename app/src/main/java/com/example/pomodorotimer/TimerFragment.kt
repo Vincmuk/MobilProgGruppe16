@@ -45,16 +45,22 @@ class TimerFragment : Fragment() {
     private val timerTypeMap: MutableMap<Timer, TimerType> = mutableMapOf()
 
     private val sessionViewModel: SessionViewModel by viewModels()
+    private val timerViewModel: TimerViewModel by viewModels()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var timerAdapter: TimerAdapter
+    private lateinit var sessionAdapter: SessionAdapter
 
     private lateinit var text_time: TextView
     private lateinit var btn_start: TextView
     private lateinit var btn_stop: TextView
     private lateinit var btn_addtask: TextView
     private var state = false
-    private var timerList: MutableList<Timer> = mutableListOf()
+    private var timerList: List<Timer>
+        get() = timerAdapter.currentList
+        set(value) {
+            timerAdapter.submitList(value)
+        }
     private var currentTimerIndex = 0
     private lateinit var currentTimer: Timer
 
@@ -69,8 +75,22 @@ class TimerFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewTimer)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        timerAdapter = TimerAdapter(timerList, timerTypeMap)
+        timerAdapter = TimerAdapter(timerTypeMap)
+        sessionAdapter = SessionAdapter()
         recyclerView.adapter = timerAdapter
+
+        timerViewModel.timerList.observe(viewLifecycleOwner) { timers ->
+            timerAdapter.submitList(timers)
+
+            if (timers.isNotEmpty()) {
+                // Access the first element safely
+                text_time.text = timers[0].remainingFormattedTime
+            } else {
+                // Handle the case when the list is empty
+                text_time.text = "00:00"
+            }
+        }
+
 
         text_time = view.findViewById(R.id.text_time)
         btn_start = view.findViewById(R.id.btn_start)
@@ -95,20 +115,22 @@ class TimerFragment : Fragment() {
         return state
     }
 
-    @SuppressLint("SetTextI18n")
     private fun startNextTimer() {
-        // Start the next timer in the list
-        if (timerList.isNotEmpty()) {
-            timerAdapter.removeTimer(0)
-            if (timerList.isNotEmpty()) {
-                currentTimer = timerList[0]
-                text_time.text = currentTimer.remainingFormattedTime
-            } else {
-
-                showToast("All Pomodoros are done.")
+        if (timerAdapter.itemCount > 0) {
+            timerAdapter.removeFirstTimer {
+                val updatedList = timerAdapter.currentList
+                if (updatedList.isNotEmpty()) {
+                    currentTimer = updatedList[0]
+                    text_time.text = currentTimer.remainingFormattedTime
+                } else {
+                    showToast("All Pomodoros are done.")
+                }
+                // Update the timer list in the ViewModel
+                timerViewModel.setTimers(updatedList) {
+                    btn_start.text = "Start"
+                    state = false
+                }
             }
-            btn_start.text = "Start"
-            state = false
         }
     }
 
@@ -160,18 +182,17 @@ class TimerFragment : Fragment() {
             saveSession(sessionName, newTimerList)
         }
         if (newTimerList.isNotEmpty()) {
-            timerAdapter.setTimers(newTimerList)
-            currentTimer = newTimerList[currentTimerIndex % newTimerList.size]
-            text_time.text = currentTimer.remainingFormattedTime
+            timerViewModel.setTimers(newTimerList) {
+                currentTimer = newTimerList[currentTimerIndex % newTimerList.size]
+                text_time.text = currentTimer.remainingFormattedTime
+            }
         }
     }
 
-
-
     private fun initializeTimer() {
         // Initialize the current timer if it's the first timer in the list
-        if (currentTimerIndex == 0 && timerList.isNotEmpty()) {
-            currentTimer = timerList.first()
+        if (currentTimerIndex == 0 && timerAdapter.currentList.isNotEmpty()) {
+            currentTimer = timerAdapter.currentList.first()
             text_time.text = currentTimer.remainingFormattedTime
         }
     }
@@ -220,7 +241,7 @@ class TimerFragment : Fragment() {
     // Extracted function for handling start button click
     @SuppressLint("SetTextI18n")
     private fun handleStartButtonClick() {
-        if (timerList.isNotEmpty()) {
+        if (timerAdapter.currentList.isNotEmpty()) {
             if (!state) {
                 currentTimer.start()
                 flip()
@@ -236,14 +257,16 @@ class TimerFragment : Fragment() {
     }
 
     // Extracted function for handling stop button click
-    @SuppressLint("SetTextI18n")
     private fun handleStopButtonClick() {
-        if (timerList.isNotEmpty()) {
+        if (timerAdapter.currentList.isNotEmpty()) {
             currentTimer.stop()
             currentTimer.reset()
-            timerAdapter.clearTimers()
-            currentTimerIndex = 0
-            text_time.text = "00:00"
+
+            // Clear the timer list in the ViewModel
+            timerViewModel.clearTimers() {
+                currentTimerIndex = 0
+                text_time.text = "00:00"
+            }
         } else {
             showToast("There are no timers to stop!")
         }
@@ -255,7 +278,7 @@ class TimerFragment : Fragment() {
         startActivityForResult(intent, 1)
     }
     private fun saveSession(sessionName: String, timers: List<Timer>) {
-        val session = Session.create(sessionName, timers)
+        val session = Session.create(sessionName, timers, System.currentTimeMillis())
         println(session)
         sessionViewModel.addSession(session)
     }

@@ -1,11 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/sessionNameTextView"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:padding="16dp"> <!-- Add padding for content spacing -->
+
+        <!-- Guideline for horizontal center -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineHorizontalCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <!-- Guideline for vertical center -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVerticalCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/sessionNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="SessionName"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineHorizontalCenter"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineVerticalCenter"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/startTimeTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="Start Time: "
+            app:layout_constraintBottom_toTopOf="@+id/guidelineHorizontalCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/guidelineVerticalCenter"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/endTimeTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="End Time: "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/guidelineVerticalCenter"
+            app:layout_constraintTop_toTopOf="@+id/guidelineHorizontalCenter" />
+
+        <TextView
+            android:id="@+id/timersSizeTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Timers Count: "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineVerticalCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/guidelineHorizontalCenter" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
