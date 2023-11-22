@@ -64,7 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         when (getSelectedTheme()) {
             "tomato" ->applyTomatoTheme()
-            "kiwi" -> applyKiwiTheme()
+            "kiwi" -> AppKiwiTheme()
             "strawberry" -> applyStrawberryTheme()
             "watermelon" -> applyWatermelonTheme()
         }
@@ -73,10 +73,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     private fun applyTomatoTheme() {
         // Implement your tomato theme (default theme)
     }
-    private fun applyKiwiTheme() {
+    private fun AppKiwiTheme() {
         // Apply Kiwi theme colors to your views
         // Example: set background color of your views
-        view?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.kiwiBackground))
+        view?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_primary))
     }
 
     private fun applyStrawberryTheme() {
