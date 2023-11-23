@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "LOADED MAINACTIVITY")
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, settingsFragment)
+            .replace(R.id.fragment_container, timerFragment)
             .commit()
 
         // Find the BottomNavigationView
