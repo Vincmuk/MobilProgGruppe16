@@ -28,19 +28,6 @@ class TimerFragment : Fragment() {
         TimerType.WORK, TimerType.SHORT_BREAK, TimerType.WORK, TimerType.LONG_BREAK
     )
 
-    private val timerDurations = mapOf(
-        TimerType.WORK to 3L, // Work timer duration in minutes
-        TimerType.SHORT_BREAK to 1L, // Short break timer duration in minutes
-        TimerType.LONG_BREAK to 2L // Long break timer duration in minutes
-
-        /*
-        TimerType.WORK to 25L, // Work timer duration in minutes
-        TimerType.SHORT_BREAK to 5L, // Short break timer duration in minutes
-        TimerType.LONG_BREAK to 15L // Long break timer duration in minutes
-
-         */
-    )
-
     //map the types to a timer instead of rewriting the whole timer class
     private val timerTypeMap: MutableMap<Timer, TimerType> = mutableMapOf()
 
@@ -56,13 +43,9 @@ class TimerFragment : Fragment() {
     private lateinit var btn_stop: TextView
     private lateinit var btn_addtask: TextView
     private var state = false
-    private var timerList: List<Timer>
-        get() = timerAdapter.currentList
-        set(value) {
-            timerAdapter.submitList(value)
-        }
     private var currentTimerIndex = 0
     private lateinit var currentTimer: Timer
+
 
     //CHANGE TO MINUTES BEFORE PRODUCTION
     private val timeUnitToUse = TimeUnit.SECONDS
@@ -92,6 +75,8 @@ class TimerFragment : Fragment() {
         }
 
 
+
+
         text_time = view.findViewById(R.id.text_time)
         btn_start = view.findViewById(R.id.btn_start)
         btn_stop = view.findViewById(R.id.btn_stop)
@@ -103,6 +88,7 @@ class TimerFragment : Fragment() {
 
         return view
     }
+
 
     private fun showToast(text: String) {
         // Show a toast message with the given text
@@ -158,16 +144,28 @@ class TimerFragment : Fragment() {
 
     private fun createNewTimerList(updatedPomsToAddValue: Int): MutableList<Timer> {
         val newTimerList = mutableListOf<Timer>()
-        // updatedPomsToAddValue * 2 because we want 1 pomodoro to be a work and a break
-        // and we repeat to make 1 work + 1 break per unit input
-        repeat(updatedPomsToAddValue * 2) {
-            val timerType = timerTypes[(currentTimerIndex + newTimerList.size) % timerTypes.size]
-            val timerDuration = timerDurations[timerType] ?: 25L
-            val timer = createTimer(timerDuration, timerType)
-            newTimerList.add(timer)
+
+        // Observe the timerDurations LiveData to get its value
+        timerViewModel.timerDurations.observeForever { timerDurations ->
+            if (timerDurations != null) {
+                repeat(updatedPomsToAddValue * 2) {
+                    val timerType =
+                        timerTypes[(currentTimerIndex + newTimerList.size) % timerTypes.size]
+                    val timerDuration = timerDurations[timerType.name] ?: 25L
+                    val timer = createTimer(timerDuration, timerType)
+                    newTimerList.add(timer)
+                }
+            }
+
+            timerViewModel.timerDurations.removeObserver { /* handle changes if needed */ }
         }
+
         return newTimerList
     }
+
+
+
+
 
     private fun removeLastBreak(newTimerList: MutableList<Timer>) {
         val lastTimer = newTimerList.last()
@@ -258,6 +256,7 @@ class TimerFragment : Fragment() {
 
     // Extracted function for handling stop button click
     private fun handleStopButtonClick() {
+        Log.d("TimerFragment", timerViewModel.timerDurations.value.toString())
         if (timerAdapter.currentList.isNotEmpty()) {
             currentTimer.stop()
             currentTimer.reset()
@@ -278,7 +277,7 @@ class TimerFragment : Fragment() {
         startActivityForResult(intent, 1)
     }
     private fun saveSession(sessionName: String, timers: List<Timer>) {
-        val session = Session.create(sessionName, timers, System.currentTimeMillis())
+        val session = Session.create(sessionName, timers)
         println(session)
         sessionViewModel.addSession(session)
     }

@@ -42,8 +42,8 @@ class SessionViewModel : ViewModel() {
 
                         val sessionName = jsonSession.getString("sessionName")
                         val hasEnded = jsonSession.getBoolean("hasEnded")
-                        val startTime = jsonSession.optLong("startTime", 0L) // Handle missing or invalid startTime
-                        val endTime = jsonSession.optLong("endTime", 0L)     // Handle missing or invalid endTime
+                        val startTime = parseFormattedTime(jsonSession.getString("startTime")) // Handle missing or invalid startTime
+                        val endTime = parseFormattedTime(jsonSession.getString("endTime"))    // Handle missing or invalid endTime
 
                         val jsonTimers = jsonSession.getJSONArray("timers")
                         val timers = mutableListOf<Timer>()
@@ -79,10 +79,18 @@ class SessionViewModel : ViewModel() {
 
             // Update the _sessionList LiveData with the loaded sessions
             setSessions(sessionList)
+            println(sessionList)
         } catch (e: Exception) {
             // Handle JSON deserialization or file reading exception
             e.printStackTrace()
         }
+    }
+
+    fun parseFormattedTime(formattedTime: String): Long {
+        val TIME_FORMAT = "HH:mm"
+        val sdf = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
+        val date = sdf.parse(formattedTime)
+        return date?.time ?: 0L
     }
 
     private fun convertFormattedTimeToSeconds(formattedTime: String): Long {
@@ -126,9 +134,9 @@ data class Session(
     companion object {
         var nextId: Long = 1
         private const val TIME_FORMAT = "HH:mm"
-        fun create(sessionName: String, timers: List<Timer>, startTime: Long): Session {
+        fun create(sessionName: String, timers: List<Timer>): Session {
             val newSession = Session(nextId, sessionName, timers.toMutableList())
-            newSession.startTime = startTime
+            newSession.startTime = System.currentTimeMillis()
             nextId++
             return newSession
         }

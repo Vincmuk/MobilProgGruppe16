@@ -1,4 +1,6 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/theme_header">
 
@@ -11,5 +13,35 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="Timer Lengths">
 
+        <!-- Work Timer Duration -->
+        <EditTextPreference
+            android:key="RANDOM11"
+            android:title="Work Timer Duration"
+            android:summary="Set the duration for the work timer (in minutes)"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:defaultValue="25" />
+
+        <!-- Short Break Timer Duration -->
+        <EditTextPreference
+            android:key="RANDOM1"
+            android:title="Short Break Timer Duration"
+            android:summary="Set the duration for the short break timer (in minutes)"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:defaultValue="5" />
+
+        <!-- Long Break Timer Duration -->
+        <EditTextPreference
+            android:key="RANDOM1111"
+            android:title="Long Break Timer Duration"
+            android:summary="Set the duration for the long break timer (in minutes)"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:defaultValue="15" />
+
+    </PreferenceCategory>
 </PreferenceScreen>
