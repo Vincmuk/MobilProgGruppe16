@@ -1,136 +1,69 @@
 package com.example.pomodorotimer
 
+import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
 
-    private val timerViewModel: TimerViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        Log.d("SettingsFragment", "ON CREATE")
-
-        // Apply the theme when the fragment is created
-        applyTheme()
-
-        findPreference<Preference>("selected_theme")?.onPreferenceChangeListener = this
-
-        findPreference<Preference>("WORK")?.onPreferenceChangeListener = this
-        findPreference<Preference>("SHORT_BREAK")?.onPreferenceChangeListener = this
-        findPreference<Preference>("LONG_BREAK")?.onPreferenceChangeListener = this
-
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        Log.d("SettingsFragment", "ACTIVITY CREATED")
-
-        applyTheme()
+    private var timerRepository: TimerRepository? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        timerRepository = TimerRepository(requireActivity())
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        setPreferencesFromResource(R.xml.preferences, rootKey)
+        Log.d("SettingsFragment", "onCreatePreferences called")
 
-        findPreference<Preference>("selected_theme")?.onPreferenceChangeListener = this
+        val workPreference: EditTextPreference? = findPreference("WORK")
+        workPreference?.onPreferenceChangeListener = this
 
-        findPreference<Preference>("WORK")?.onPreferenceChangeListener = this
-        findPreference<Preference>("SHORT_BREAK")?.onPreferenceChangeListener = this
-        findPreference<Preference>("LONG_BREAK")?.onPreferenceChangeListener = this
 
-        Log.d("SettingsFragment", "CREATED PREFERENCES")
-    }
-
-    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-        if (preference.key == "selected_theme") {
-            // Handle theme changes here
-            val selectedTheme = newValue.toString()
-            saveSelectedTheme(selectedTheme) // Save the selected theme
-            applyTheme() // Apply the selected theme
+        workPreference?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
         }
-        Log.d("SettingsFragment", "ATTEMPTING TO CHECK PREFERENCES")
-        when (preference.key) {
-            "WORK", "SHORT_BREAK", "LONG_BREAK" -> {
-                if (newValue is String) {
-                    Log.d("SettingsFragment", "Duration value is a String: $newValue")
-                } else {
-                    Log.d("SettingsFragment", "Duration value is not a String. Type: ${newValue?.javaClass}")
-                    saveTimerDuration(preference.key, newValue)
+        val shortBreakPreference: EditTextPreference? = findPreference("SHORT_BREAK")
+        shortBreakPreference?.onPreferenceChangeListener = this
+
+        shortBreakPreference?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
+        }
+        val longBreakPreference: EditTextPreference? = findPreference("LONG_BREAK")
+        longBreakPreference?.onPreferenceChangeListener = this
+
+        longBreakPreference?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
+        }
+
+    }
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+        Log.d("SettingsFragment", "onPreferenceChange called")
+
+        // Assuming you have a reference to TimerRepository in your fragment
+        timerRepository?.let { repo ->
+            when (preference.key) {
+                "WORK", "SHORT_BREAK", "LONG_BREAK" -> {
+                    if (newValue is String) {
+                        try {
+                            // Try to parse the String to Long
+                            val value = newValue.toLong()
+                            repo.updatePreference(preference.key, value)
+                        } catch (e: NumberFormatException) {
+                            Log.e("SettingsFragment", "Invalid number format for ${preference.key}")
+                        }
+                    }
                 }
             }
         }
+
         return true
     }
 
 
-    private fun saveTimerDuration(timerKey: String, duration: Any?) {
-        Log.d("SettingsFragment", "Saving timer duration for key $timerKey")
-
-        if (duration is Long) {
-            val sharedPreferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-            val editor = sharedPreferences?.edit()
-            editor?.putLong(timerKey, duration)
-            editor?.apply()
-
-            Log.d("SettingsFragment", "Timer duration saved successfully.")
-        } else {
-            Log.e("SettingsFragment", "Invalid duration type: ${duration?.javaClass}")
-        }
-    }
-
-
-
-    // Save the selected theme in SharedPreferences
-    private fun saveSelectedTheme(theme: String) {
-        val sharedPreferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        val editor = sharedPreferences?.edit()
-        editor?.putString("selected_theme", theme)
-        editor?.apply()
-    }
-
-    // Retrieve the selected theme from SharedPreferences
-    private fun getSelectedTheme(): String? {
-        val sharedPreferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        return sharedPreferences?.getString("selected_theme", "tomato")
-         // Default to tomato theme
-    }
-
-
-
-    private fun applyTheme() {
-
-        when (getSelectedTheme()) {
-            "tomato" ->applyTomatoTheme()
-            "kiwi" -> applyKiwiTheme()
-            "strawberry" -> applyStrawberryTheme()
-            "watermelon" -> applyWatermelonTheme()
-        }
-    }
-
-    private fun applyTomatoTheme() {
-        // Implement your tomato theme (default theme)
-    }
-    private fun applyKiwiTheme() {
-        // Apply Kiwi theme colors to your views
-        // Example: set background color of your views
-        view?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.md_theme_light_primary))
-    }
-
-    private fun applyStrawberryTheme() {
-        // Apply Strawberry theme colors to your views
-        // Example: set background color of your views
-        view?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.strawberryBackground))
-    }
-    private fun applyWatermelonTheme() {
-        // Implement your watermelon theme
-    }
-
 }
+

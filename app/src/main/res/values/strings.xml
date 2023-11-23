@@ -20,8 +20,6 @@
     Settings Page
     -->
 
-    <string name="theme_header" translatable="false">Themes</string>
-    <string name="theme_title" translatable="false">Change Theme</string>
     <string name="WORK" translatable="false">WORK</string>
     <string name="SHORT_BREAK" translatable="false">SHORT_BREAK</string>
     <string name="LONG_BREAK" translatable="false">LONG_BREAK</string>

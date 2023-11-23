@@ -2,6 +2,7 @@ package com.example.pomodorotimer
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -31,8 +32,8 @@ class TimerFragment : Fragment() {
     //map the types to a timer instead of rewriting the whole timer class
     private val timerTypeMap: MutableMap<Timer, TimerType> = mutableMapOf()
 
-    private val sessionViewModel: SessionViewModel by viewModels()
     private val timerViewModel: TimerViewModel by viewModels()
+    private val sessionViewModel: SessionViewModel by viewModels()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var timerAdapter: TimerAdapter
@@ -50,11 +51,23 @@ class TimerFragment : Fragment() {
     //CHANGE TO MINUTES BEFORE PRODUCTION
     private val timeUnitToUse = TimeUnit.SECONDS
 
+    private var timerRepository: TimerRepository? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        timerRepository = TimerRepository(requireActivity())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_timer, container, false)
+
+        Log.d("TimerFragment", "${timerRepository?.getWorkDuration()}")
+        Log.d("TimerFragment", "${timerRepository?.getShortBreakDuration()}")
+        Log.d("TimerFragment", "${timerRepository?.getLongBreakDuration()}")
+
+        Log.d("TimerFragment", "${timerViewModel.timerList.value}")
 
         recyclerView = view.findViewById(R.id.recyclerViewTimer)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -62,20 +75,15 @@ class TimerFragment : Fragment() {
         sessionAdapter = SessionAdapter()
         recyclerView.adapter = timerAdapter
 
+
         timerViewModel.timerList.observe(viewLifecycleOwner) { timers ->
             timerAdapter.submitList(timers)
-
             if (timers.isNotEmpty()) {
-                // Access the first element safely
                 text_time.text = timers[0].remainingFormattedTime
             } else {
-                // Handle the case when the list is empty
                 text_time.text = "00:00"
             }
         }
-
-
-
 
         text_time = view.findViewById(R.id.text_time)
         btn_start = view.findViewById(R.id.btn_start)
@@ -109,7 +117,10 @@ class TimerFragment : Fragment() {
                     currentTimer = updatedList[0]
                     text_time.text = currentTimer.remainingFormattedTime
                 } else {
-                    showToast("All Pomodoros are done.")
+                    timerViewModel.clearTimers {
+                    showToast("All Pomodoros are done")
+                    Log.d("TimerFragment", "${timerViewModel.timerList.value}")
+                    }
                 }
                 // Update the timer list in the ViewModel
                 timerViewModel.setTimers(updatedList) {
@@ -144,27 +155,25 @@ class TimerFragment : Fragment() {
 
     private fun createNewTimerList(updatedPomsToAddValue: Int): MutableList<Timer> {
         val newTimerList = mutableListOf<Timer>()
+        Log.d("Timer Fragment", "Attempting to create list")
 
-        // Observe the timerDurations LiveData to get its value
-        timerViewModel.timerDurations.observeForever { timerDurations ->
-            if (timerDurations != null) {
-                repeat(updatedPomsToAddValue * 2) {
-                    val timerType =
-                        timerTypes[(currentTimerIndex + newTimerList.size) % timerTypes.size]
-                    val timerDuration = timerDurations[timerType.name] ?: 25L
-                    val timer = createTimer(timerDuration, timerType)
-                    newTimerList.add(timer)
-                }
+        val workDuration = timerRepository?.getWorkDuration() ?: 25L
+        val shortBreakDuration = timerRepository?.getShortBreakDuration() ?: 5L
+        val longBreakDuration = timerRepository?.getLongBreakDuration() ?: 15L
+
+        repeat(updatedPomsToAddValue * 2) {
+            val timerType = timerTypes[(currentTimerIndex + newTimerList.size) % timerTypes.size]
+            val timerDuration = when (timerType) {
+                TimerType.WORK -> workDuration
+                TimerType.SHORT_BREAK -> shortBreakDuration
+                TimerType.LONG_BREAK -> longBreakDuration
             }
-
-            timerViewModel.timerDurations.removeObserver { /* handle changes if needed */ }
+            val timer = createTimer(timerDuration, timerType)
+            newTimerList.add(timer)
         }
 
         return newTimerList
     }
-
-
-
 
 
     private fun removeLastBreak(newTimerList: MutableList<Timer>) {
@@ -256,7 +265,6 @@ class TimerFragment : Fragment() {
 
     // Extracted function for handling stop button click
     private fun handleStopButtonClick() {
-        Log.d("TimerFragment", timerViewModel.timerDurations.value.toString())
         if (timerAdapter.currentList.isNotEmpty()) {
             currentTimer.stop()
             currentTimer.reset()
