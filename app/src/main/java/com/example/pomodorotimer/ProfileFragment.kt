@@ -1,7 +1,6 @@
 package com.example.pomodorotimer
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,22 +29,10 @@ class ProfileFragment : Fragment() {
         context?.let { sessionViewModel.loadExistingSessions(it) }
 
         sessionViewModel.sessionList.observe(viewLifecycleOwner) { sessions ->
-            Log.d("ProfileFragment", "Observed sessions: ${sessions.size}")
             if (sessions.isNotEmpty()) {
                 sessionAdapter.submitList(sessions)
             }
         }
         return view
     }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("ProfileFragment", "onStart")
-    }
-    override fun onResume() {
-        super.onResume()
-        Log.d("ProfileFragment", "onResume")
-    }
-
-
 }

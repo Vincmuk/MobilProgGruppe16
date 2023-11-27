@@ -49,21 +49,18 @@ class TimerAdapter(private val timerTypeMap: Map<Timer, TimerType>) :
         override fun areItemsTheSame(oldItem: Timer, newItem: Timer): Boolean {
             return oldItem == newItem
         }
-
         override fun areContentsTheSame(oldItem: Timer, newItem: Timer): Boolean {
             return oldItem == newItem
         }
     }
-
 }
-
 class ShrinkItemAnimator : DefaultItemAnimator() {
 
     override fun animateRemove(holder: RecyclerView.ViewHolder): Boolean {
         val shrinkAnimator = ObjectAnimator.ofFloat(holder.itemView, "scaleX", 1f, 0f)
-        shrinkAnimator.duration = 50 // Adjust the duration as needed
+        shrinkAnimator.duration = 50
         val fadeOutAnimator = ObjectAnimator.ofFloat(holder.itemView, "alpha", 1f, 0f)
-        fadeOutAnimator.duration = 50 // Adjust the duration as needed
+        fadeOutAnimator.duration = 50
 
         val animatorSet = AnimatorSet()
         animatorSet.playTogether(shrinkAnimator, fadeOutAnimator)

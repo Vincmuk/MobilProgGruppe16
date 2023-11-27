@@ -18,11 +18,9 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        Log.d("SettingsFragment", "onCreatePreferences called")
 
         val workPreference: EditTextPreference? = findPreference("WORK")
         workPreference?.onPreferenceChangeListener = this
-
 
         workPreference?.setOnBindEditTextListener { editText ->
             editText.inputType = InputType.TYPE_CLASS_NUMBER
@@ -42,15 +40,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     }
     override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-        Log.d("SettingsFragment", "onPreferenceChange called")
-
-        // Assuming you have a reference to TimerRepository in your fragment
         timerRepository?.let { repo ->
             when (preference.key) {
                 "WORK", "SHORT_BREAK", "LONG_BREAK" -> {
                     if (newValue is String) {
                         try {
-                            // Try to parse the String to Long
                             val value = newValue.toLong()
                             repo.updatePreference(preference.key, value)
                         } catch (e: NumberFormatException) {

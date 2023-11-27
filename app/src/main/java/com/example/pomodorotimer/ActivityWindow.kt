@@ -40,7 +40,6 @@ class ActivityWindow() : Activity() {
                 setResult(RESULT_OK, resultIntent)
                 finish()
             } else {
-                println("Invalid pomsToAdd value: $pomsToAddText")
                 setResult(RESULT_CANCELED)
                 finish()
             }

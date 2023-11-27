@@ -1,17 +1,3 @@
 <resources>
-    <string-array name="theme_entries">
-        <item>Tomato</item>
-        <item>Kiwi</item>
-        <item>Strawberry</item>
-        <item>Watermelon</item>
-        <!-- Add other fruit themes as needed -->
-    </string-array>
 
-    <string-array name="theme_values">
-        <item>tomato</item>
-        <item>kiwi</item>
-        <item>strawberry</item>
-        <item>watermelon</item>
-        <!-- Add corresponding values for other fruit themes -->
-    </string-array>
 </resources>

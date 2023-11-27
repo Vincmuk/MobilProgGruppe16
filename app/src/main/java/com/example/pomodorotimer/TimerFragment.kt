@@ -55,7 +55,7 @@ class TimerFragment : Fragment() {
 
 
     //CHANGE TO MINUTES BEFORE PRODUCTION
-    private val timeUnitToUse = TimeUnit.SECONDS
+    private val timeUnitToUse = TimeUnit.MINUTES
 
     private var timerRepository: TimerRepository? = null
     override fun onAttach(context: Context) {
@@ -97,7 +97,7 @@ class TimerFragment : Fragment() {
         btn_stop = view.findViewById(R.id.btn_stop)
         btn_addtask = view.findViewById(R.id.btn_addtask)
 
-        // Initialize buttons and timer
+        // init buttons and timer otherwise they break :)
         initButtons()
         initializeTimer()
 
@@ -106,12 +106,11 @@ class TimerFragment : Fragment() {
 
 
     private fun showToast(text: String) {
-        // Show a toast message with the given text
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
+    // Flip flop function
     private fun flip(): Boolean {
-        // Toggle the state (true/false) and return the new state
         state = !state
         return state
     }
@@ -161,7 +160,6 @@ class TimerFragment : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Handle the result of the activity for adding tasks
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
@@ -234,19 +232,19 @@ class TimerFragment : Fragment() {
         }
     }
 
+    // From https://github.com/arsvechkarev/TimerX/tree/master
     private fun createTimer(
         duration: Long,
         timerType: TimerType,
         timeUnit: TimeUnit = timeUnitToUse,
         format: String = "MM:SS"
     ): Timer {
-        // Create and configure a timer with the given parameters
         return buildTimer {
             startFormat(format)
             startTime(duration, timeUnit)
             useExactDelay(true)
             onTick { millis, formattedTime ->
-                text_time.text = formattedTime  // Update text_time for the current timer
+                text_time.text = formattedTime
                 Log.i("Timer", "Remaining time = $millis")
             }
             onFinish {
@@ -323,6 +321,7 @@ class TimerFragment : Fragment() {
         val intent = Intent(context, ActivityWindow::class.java)
         startActivityForResult(intent, 1)
     }
+
     private fun saveSession(sessionName: String, timers: List<Timer>) {
         val session = Session.create(sessionName, timers)
         println(session)

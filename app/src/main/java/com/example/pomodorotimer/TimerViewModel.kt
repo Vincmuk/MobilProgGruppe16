@@ -17,16 +17,12 @@ class TimerViewModel(application: Application) : AndroidViewModel(application) {
     private val timerRepository = TimerRepository(application)
 
     init {
-        // Fetch preferences once and observe changes
         timerRepository.observePreferences { preferences ->
             val timerDurations = preferences ?: getDefaultTimerDurations()
             _timerDuration.value = timerDurations
         }
     }
-
-
     private fun getDefaultTimerDurations(): Map<String, Long> {
-        // Provide default values if needed
         return mapOf(
             "WORK" to 25L,
             "SHORT_BREAK" to 5L,

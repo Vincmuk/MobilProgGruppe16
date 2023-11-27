@@ -37,25 +37,6 @@
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
     </style>
 
-    <style name="Theme.Splash" parent="Theme.PomodoroTimer">
-
-    </style>
-
-    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#7D8887</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
-        <item name="postSplashScreenTheme">@style/Theme.PomodoroTimer</item>
-
-    </style>
-
-    <style name="Theme.Kiwi" parent="Theme.MaterialComponents.Light">
-        <item name="color">@color/kiwiBackground</item>
-    </style>
-
-    <style name="Theme.Strawberry" parent="Theme.MaterialComponents.Light">
-        <item name="color">@color/strawberryBackground</item>
-    </style>
-
     <style name="Theme.AppKiwiTheme" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>

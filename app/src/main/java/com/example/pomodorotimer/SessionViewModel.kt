@@ -2,7 +2,6 @@ package com.example.pomodorotimer
 
 import Debug
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +24,6 @@ class SessionViewModel : ViewModel() {
 
     fun setSessions(newSessions: List<Session>) {
         _sessionList.value = newSessions
-        Log.d("SessionViewModel", "setSessions called with ${newSessions.size} sessions")
     }
 
     fun loadExistingSessions(context: Context) {
@@ -42,8 +40,8 @@ class SessionViewModel : ViewModel() {
 
                         val sessionName = jsonSession.getString("sessionName")
                         val hasEnded = jsonSession.getBoolean("hasEnded")
-                        val startTime = parseFormattedTime(jsonSession.getString("startTime")) // Handle missing or invalid startTime
-                        val endTime = parseFormattedTime(jsonSession.getString("endTime"))    // Handle missing or invalid endTime
+                        val startTime = parseFormattedTime(jsonSession.getString("startTime"))
+                        val endTime = parseFormattedTime(jsonSession.getString("endTime"))
 
                         val jsonTimers = jsonSession.getJSONArray("timers")
                         val timers = mutableListOf<Timer>()
@@ -51,18 +49,13 @@ class SessionViewModel : ViewModel() {
                         for (i in 0 until jsonTimers.length()) {
                             try {
                                 val jsonTimer = jsonTimers.getJSONObject(i)
-                                // Extract timer properties and create Timer objects
                                 val formattedStartTime = jsonTimer.getString("formattedStartTime")
-                                // Add any other timer properties you saved
-
                                 val timer = buildTimer {
                                     startFormat("MM:SS")
                                     startTime(convertFormattedTimeToSeconds(formattedStartTime), TimeUnit.SECONDS)
                                 }
                                 timers.add(timer)
                             } catch (e: JSONException) {
-                                // Handle the exception for individual timers (log, ignore, etc.)
-
                                 e.printStackTrace()
                             }
                         }
@@ -70,22 +63,20 @@ class SessionViewModel : ViewModel() {
                         val session = Session(sessionId, sessionName, timers, hasEnded, startTime, endTime)
                         sessionList.add(session)
                     } catch (e: Exception) {
-                        // Handle the exception for the entire session (log, ignore, etc.)
                         e.printStackTrace()
                     }
                 }
             }
-            Session.nextId = sessionList.maxByOrNull { it.sessionId }?.sessionId?.plus(1) ?: 1
-
-            // Update the _sessionList LiveData with the loaded sessions
+            // Set the nextId for creating new sessions
+            Session.nextId = (sessionList.maxByOrNull { it.sessionId }?.sessionId ?: 0) + 1
             setSessions(sessionList)
             println(sessionList)
         } catch (e: Exception) {
-            // Handle JSON deserialization or file reading exception
             e.printStackTrace()
         }
     }
 
+    // Function to parse formatted time string to milliseconds
     fun parseFormattedTime(formattedTime: String): Long {
         val TIME_FORMAT = "HH:mm"
         val sdf = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
@@ -93,6 +84,7 @@ class SessionViewModel : ViewModel() {
         return date?.time ?: 0L
     }
 
+    // Function to convert formatted time string to seconds
     private fun convertFormattedTimeToSeconds(formattedTime: String): Long {
         val parts = formattedTime.split(":")
         if (parts.size == 2) {
@@ -103,18 +95,20 @@ class SessionViewModel : ViewModel() {
         return 0L
     }
 
+    // Function to add a new session
     fun addSession(session: Session) {
         val currentList = _sessionList.value.orEmpty()
         val newList = currentList.toMutableList().apply { add(session) }
         _sessionList.value = newList
     }
 
+    // Function to get the oldest non-completed session, we assume that this is the current session.
     fun getOldestNonCompletedSession(): Session? {
         return _sessionList.value.orEmpty().firstOrNull { !it.hasEnded }
     }
 
+    // Function to update and save a session
     fun updateAndSaveSession(session: Session, context: Context) {
-        // Update the session (e.g., mark it as completed)
         session.updateSession()
         // Save the completed session to JSON
         if (session.hasEnded) {
@@ -135,13 +129,13 @@ data class Session(
         var nextId: Long = 1
         private const val TIME_FORMAT = "HH:mm"
         fun create(sessionName: String, timers: List<Timer>): Session {
-            val newSession = Session(nextId, sessionName, timers.toMutableList())
+            val newSession = Session(nextId++, sessionName, timers.toMutableList())
             newSession.startTime = System.currentTimeMillis()
-            nextId++
             return newSession
         }
     }
 
+    // Function to update the session status based on timers
     fun updateSession() {
         // Check if the last timer in the list has completed
         if (timers.lastOrNull()?.remainingTimeInMillis == 0L) {
@@ -150,6 +144,7 @@ data class Session(
         }
     }
 
+    // Function to save a completed session to JSON
     fun saveCompletedSessionToJSON(context: Context) {
         try {
             val jsonSession = JSONObject().apply {
@@ -164,7 +159,6 @@ data class Session(
                     val jsonTimer = JSONObject().apply {
                         put("timerIndex", index)
                         put("formattedStartTime", timer.formattedStartTime)
-                        // Add any other timer properties you want to save
                     }
                     jsonTimers.put(jsonTimer)
                 }
@@ -175,25 +169,20 @@ data class Session(
             val jsonString = jsonSession.toString()
             println(jsonSession.toString())
 
-            // Define the file name and create a FileOutputStream
             val fileName = "completed_session_${sessionId}.json"
             val fileOutputStream: FileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
 
-            // Use OutputStreamWriter to write the JSON string to the file
             OutputStreamWriter(fileOutputStream).use { writer ->
                 writer.write(jsonString)
                 println("Written to data/data/com.example.pomodorotimer/files")
             }
-
-            // Close the file output stream
             fileOutputStream.close()
-
         } catch (e: Exception) {
-            // Handle JSON serialization or file writing exception
             e.printStackTrace()
         }
     }
 
+    // Function to get formatted time string from milliseconds
     fun getFormattedTime(timeInMillis: Long): String {
         val sdf = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
         val calendar = Calendar.getInstance()
@@ -201,6 +190,7 @@ data class Session(
         return sdf.format(calendar.time)
     }
 
+    // Override toString() for debugging purposes
     override fun toString(): String {
         return "Session(id=$sessionId, name='$sessionName', hasEnded=$hasEnded, " +
                 "startTime=${getFormattedTime(startTime)}, endTime=${getFormattedTime(endTime)}) Timers: ${Debug.printTimerList(timers)}"
