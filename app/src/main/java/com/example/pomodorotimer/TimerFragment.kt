@@ -4,13 +4,19 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -131,6 +137,26 @@ class TimerFragment : Fragment() {
         }
     }
 
+    // https://stackoverflow.com/questions/73452871/creating-a-vibrator-for-android-in-kotlin
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun vibrateDevice() {
+        if (context != null) {
+            if (Build.VERSION.SDK_INT >= 31) {
+                val vibratorManager =
+                    requireContext().getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                val vibrator = vibratorManager.defaultVibrator
+                vibrator.vibrate(VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                val v = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= 26) {
+                    v.vibrate(VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    v.vibrate(VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE))
+                }
+            }
+        }
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // Handle the result of the activity for adding tasks
@@ -201,6 +227,8 @@ class TimerFragment : Fragment() {
         if (currentTimerIndex == 0 && timerAdapter.currentList.isNotEmpty()) {
             currentTimer = timerAdapter.currentList.first()
             text_time.text = currentTimer.remainingFormattedTime
+        } else {
+            text_time.text = "00:00"
         }
     }
 
@@ -220,13 +248,22 @@ class TimerFragment : Fragment() {
                 Log.i("Timer", "Remaining time = $millis")
             }
             onFinish {
-                sessionViewModel.getOldestNonCompletedSession()
-                    ?.let { context?.let { it1 -> sessionViewModel.updateAndSaveSession(it, it1) } }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    vibrateDevice()
+                }
+                sessionViewModel.getOldestNonCompletedSession()?.let { context?.let { it1 -> sessionViewModel.updateAndSaveSession(it, it1) } }
+                context?.let { playSound(it) }
                 startNextTimer()
             }
         }.also {
             timerTypeMap[it] = timerType
         }
+    }
+
+    private fun playSound(context: Context) {
+        val mediaPlayer = MediaPlayer.create(context, R.raw.pop
+        )
+        mediaPlayer.start()
     }
 
     // Extracted function for initializing buttons
