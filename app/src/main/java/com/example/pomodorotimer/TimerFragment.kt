@@ -80,6 +80,7 @@ class TimerFragment : Fragment() {
         timerAdapter = TimerAdapter(timerTypeMap)
         sessionAdapter = SessionAdapter()
         recyclerView.adapter = timerAdapter
+        recyclerView.itemAnimator = ShrinkItemAnimator()
 
 
         timerViewModel.timerList.observe(viewLifecycleOwner) { timers ->
@@ -126,9 +127,10 @@ class TimerFragment : Fragment() {
                     timerViewModel.clearTimers {
                     showToast("All Pomodoros are done")
                     Log.d("TimerFragment", "${timerViewModel.timerList.value}")
+                        btn_start.text = "Start"
+                        state = false
                     }
                 }
-                // Update the timer list in the ViewModel
                 timerViewModel.setTimers(updatedList) {
                     btn_start.text = "Start"
                     state = false

@@ -1,10 +1,16 @@
 package com.example.pomodorotimer
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import timerx.Timer
 
@@ -50,3 +56,27 @@ class TimerAdapter(private val timerTypeMap: Map<Timer, TimerType>) :
     }
 
 }
+
+class ShrinkItemAnimator : DefaultItemAnimator() {
+
+    override fun animateRemove(holder: RecyclerView.ViewHolder): Boolean {
+        val shrinkAnimator = ObjectAnimator.ofFloat(holder.itemView, "scaleX", 1f, 0f)
+        shrinkAnimator.duration = 50 // Adjust the duration as needed
+        val fadeOutAnimator = ObjectAnimator.ofFloat(holder.itemView, "alpha", 1f, 0f)
+        fadeOutAnimator.duration = 50 // Adjust the duration as needed
+
+        val animatorSet = AnimatorSet()
+        animatorSet.playTogether(shrinkAnimator, fadeOutAnimator)
+
+        animatorSet.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                dispatchRemoveFinished(holder)
+            }
+        })
+
+        animatorSet.start()
+
+        return true
+    }
+}
+
